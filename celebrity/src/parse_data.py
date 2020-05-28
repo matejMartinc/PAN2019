@@ -2,7 +2,7 @@
 import tqdm
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from tfidf_kingdom import *
+from .tfidf_kingdom import *
 import json
 import pandas as pd
 
@@ -76,33 +76,30 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--num_samples", default=100, type=int)
+    parser.add_argument("--num_samples", default=100, type=int, help="How many tweets per author to take")
+    parser.add_argument('--train_corpus', type=str, default='../../data/pan19-celebrity-profiling-training-dataset-2019-01-31/feeds.ndjson', help='Path to PAN train corpus')
+    parser.add_argument('--train_labels', type=str,default="../../data/pan19-celebrity-profiling-training-dataset-2019-01-31/labels.ndjson", help='Path to PAN train labels')
+    parser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
     args = parser.parse_args()
-    data_inpt = "../../data/pan19-celebrity-profiling-training-dataset-2019-01-31/feeds.ndjson"
+    data_inpt = args.train_corpus
     num_train = 30000
-    labels_inpt = "../../data/pan19-celebrity-profiling-training-dataset-2019-01-31/labels.ndjson"
-    datafolder = "../train_data"
+    labels_inpt = args.train_label
+    datafolder = args.feature_folder
     a = parse_feeds(data_inpt, labels_inpt, train_threshold=num_train, all=True)
 
     train_instances, test_instances, train_labels, test_labels, vectorizer = a
     out_obj = {"train_features": train_instances, "test_features": test_instances}
 
-    outfile = open("../train_data/train_labels.pickle", 'wb')
+    outfile = open(datafolder + "/train_labels.pickle", 'wb')
     pickle.dump(train_labels, outfile)
     outfile.close()
 
-    outfile = open("../train_data/test_labels.pickle", 'wb')
+    outfile = open(datafolder + "/test_labels.pickle", 'wb')
     pickle.dump(test_labels, outfile)
     outfile.close()
 
-    outfile = open("../train_data/vectorizer.pickle", 'wb')
+    outfile = open(datafolder + "/vectorizer.pickle", 'wb')
     pickle.dump(vectorizer, outfile)
     outfile.close()
     io.savemat(datafolder + "/train_instances.mat", out_obj)
 
-    '''train_instances,test_instances, train_labels,test_labels,vectorizer = b
-    out_obj = {"train_features_mm":train_instances,"test_features_mm":test_instances}
-    outfile = open("../train_data/vectorizer_mm.pickle",'wb')
-    pickle.dump(vectorizer,outfile)
-    outfile.close()
-    io.savemat(datafolder+"/train_instances_mm.mat",out_obj)'''

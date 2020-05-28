@@ -5,15 +5,12 @@ import pickle
 from sklearn import preprocessing
 import numpy as np
 from sklearn.metrics import f1_score
-from sklearn import linear_model
-from sklearn.svm import LinearSVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingRegressor
 import logging
 from sklearn.externals import joblib
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 logging.getLogger().setLevel(logging.INFO)
 import numpy
+import argparse
 numpy.random.seed()
 
 def load_labels(label_pickle,test_labels):
@@ -62,9 +59,13 @@ def load_labels(label_pickle,test_labels):
         
 if __name__ == "__main__":
 
-    fname = "../train_data/train_instances.mat"
-    labels_train = "../train_data/train_labels.pickle"
-    labels_test = "../train_data/test_labels.pickle"
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
+    args = parser.parse_args()
+
+    fname = args.feature_folder + "/train_instances.mat"
+    labels_train = args.feature_folder +  "/train_labels.pickle"
+    labels_test = args.feature_folder + "/test_labels.pickle"
     
     dmat = sio.loadmat(fname)
     train_features = dmat['train_features']
@@ -72,19 +73,19 @@ if __name__ == "__main__":
     label_vectors,encoders = load_labels(labels_train,labels_test)
     encoder_ocupations,encoder_gender,encoder_fame,encoder_birth = encoders
 
-    outfile = open("../train_data/encoder_occupation.pickle",'wb')
+    outfile = open(args.feature_folder + "/encoder_occupation.pickle",'wb')
     pickle.dump(encoder_ocupations,outfile)
     outfile.close()
 
-    outfile = open("../train_data/encoder_gender.pickle",'wb')
+    outfile = open(args.feature_folder + "/encoder_gender.pickle",'wb')
     pickle.dump(encoder_gender,outfile)
     outfile.close()
 
-    outfile = open("../train_data/encoder_fame.pickle",'wb')
+    outfile = open(args.feature_folder + "/encoder_fame.pickle",'wb')
     pickle.dump(encoder_fame,outfile)
     outfile.close()
 
-    outfile = open("../train_data/encoder_birthyear.pickle",'wb')
+    outfile = open(args.feature_folder + "/encoder_birthyear.pickle",'wb')
     pickle.dump(encoder_birth,outfile)
     outfile.close()
     
@@ -94,11 +95,8 @@ if __name__ == "__main__":
         test_labels = vals[1]
         clf = LogisticRegression(C=1e2, fit_intercept=False)
         clf.fit(train_features,train_labels)
-        joblib.dump(clf, '../train_data/trained_LR_{}.pkl'.format(target))
+        joblib.dump(clf, args.feature_folder + '/trained_LR_{}.pkl'.format(target))
         predictions = clf.predict(test_features)
-            
-        #reg = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=0, loss='ls').fit(train_features,train_labels)
-        #predictions = np.around(reg.predict(test_features))
 
         f1 = f1_score(predictions,test_labels, average="weighted")
         logging.info("{} Performed with {}".format(target,f1))
@@ -106,9 +104,3 @@ if __name__ == "__main__":
     total_score = 1/np.sum([1/sc for sc in preds.values()])
     logging.info("Total score {}".format(total_score))
 
-    #current best to beat
-    '''26-Apr-19 14:22:33 - fame Performed with 0.7836611675650853
-       26-Apr-19 15:08:12 - birthyear Performed with 0.06490008241102284
-       26-Apr-19 15:14:58 - occupation Performed with 0.75777108093486
-       26-Apr-19 15:18:04 - gender Performed with 0.9016768101974307
-       26-Apr-19 15:18:04 - Total score 0.052320226220430865'''

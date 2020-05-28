@@ -2,13 +2,15 @@
 import tqdm 
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from tfidf_kingdom import *
+from .tfidf_kingdom import *
 import json
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 from os import listdir
 from os.path import isfile, join
 import pandas as pd
+import argparse
+import os
 
 def read_gender(text_path):
 
@@ -144,42 +146,49 @@ def parse_feeds(fname, all=False):
 if __name__ == "__main__":
 
     from scipy import io
-    inpt = "../../data/pan19-author-profiling-training-2019-02-18/"
+
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--train_corpus', type=str,
+                        default="../../data/pan19-author-profiling-training-2019-02-18/",
+                        help='Path to PAN train corpus')
+    parser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
+    args = parser.parse_args()
 
     for lang in ['en', 'es']:
-        data_path = inpt + lang
+        data_path = os.path.join(args.train_corpus, lang)
         bot, gender = parse_feeds(data_path, all=True)
         task = "bot"
         train_instances,test_instances, train_labels,test_labels,vectorizer = bot
         out_obj = {"train_features":train_instances,"test_features":test_instances}
 
-        outfile = open("../train_data/train_labels_" + task + "_" + lang + ".pickle",'wb')
+        outfile = open(args.feature_folder + "/train_labels_" + task + "_" + lang + ".pickle",'wb')
         pickle.dump(train_labels,outfile)
         outfile.close()
 
-        outfile = open("../train_data/test_labels_" + task + "_" + lang + ".pickle",'wb')
+        outfile = open(args.feature_folder + "/test_labels_" + task + "_" + lang + ".pickle",'wb')
         pickle.dump(test_labels,outfile)
         outfile.close()
 
-        outfile = open("../train_data/vectorizer_" + task + "_" + lang + ".pickle",'wb')
+        outfile = open(args.feature_folder + "/vectorizer_" + task + "_" + lang + ".pickle",'wb')
         pickle.dump(vectorizer,outfile)
         outfile.close()
-        io.savemat("../train_data/train_instances_" + task + "_" + lang + ".mat",out_obj)
+        io.savemat(args.feature_folder + "/train_instances_" + task + "_" + lang + ".mat",out_obj)
 
         task = "gender"
         train_instances, test_instances, train_labels, test_labels, vectorizer = gender
         out_obj = {"train_features": train_instances, "test_features": test_instances}
 
-        outfile = open("../train_data/train_labels_" + task + "_" + lang + ".pickle", 'wb')
+        outfile = open(args.feature_folder + "/train_labels_" + task + "_" + lang + ".pickle", 'wb')
         pickle.dump(train_labels, outfile)
         outfile.close()
 
-        outfile = open("../train_data/test_labels_" + task + "_" + lang + ".pickle", 'wb')
+        outfile = open(args.feature_folder + "/test_labels_" + task + "_" + lang + ".pickle", 'wb')
         pickle.dump(test_labels, outfile)
         outfile.close()
 
-        outfile = open("../train_data/vectorizer_" + task + "_" + lang + ".pickle", 'wb')
+        outfile = open(args.feature_folder + "/vectorizer_" + task + "_" + lang + ".pickle", 'wb')
         pickle.dump(vectorizer, outfile)
         outfile.close()
-        io.savemat("../train_data/train_instances_" + task + "_" + lang + ".mat", out_obj)
+        io.savemat(args.feature_folder + "/train_instances_" + task + "_" + lang + ".mat", out_obj)
 

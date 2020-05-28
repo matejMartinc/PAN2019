@@ -2,7 +2,7 @@
 import tqdm
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from tfidf_kingdom import *
+from .tfidf_kingdom import *
 import argparse
 from collections import defaultdict
 import json
@@ -25,12 +25,13 @@ def write_output(d, output_file):
 if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser(description='Author Profiling Evaluation')
-    argparser.add_argument('-o', '--output', dest='output', type=str, default='../results/results.json',
-                           help='Choose output directory')
+    argparser.add_argument('--output', dest='output', type=str, default='../results/results.json',
+                           help='Choose output result directory')
 
-    argparser.add_argument('-c', '--input', dest='input', type=str,
-                           default='../../data/pan19-celebrity-profiling-training-dataset-2019-01-31/feeds.ndjson',
-                           help='Choose input dataset')
+    argparser.add_argument('--input', dest='input', type=str,
+                           default='../../data/pan19-celebrity-profiling-test-dataset-2019-01-31/feeds.ndjson',
+                           help='Choose input test dataset')
+    argparser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
     args = argparser.parse_args()
 
     output = args.output
@@ -57,16 +58,16 @@ if __name__ == '__main__':
         test_ids.append(k)
 
     test_df = build_dataframe(test_documents)
-    vectorizer_file = open("../train_data/vectorizer.pickle", 'rb')
+    vectorizer_file = open(args.feature_folder + "/vectorizer.pickle", 'rb')
     vectorizer = pickle.load(vectorizer_file)
     predict_features = vectorizer.transform(test_df)
 
     docs_dict = defaultdict(dict)
 
     for task in tasks:
-        encoder_file = open("../train_data/encoder_" + task +".pickle", 'rb')
+        encoder_file = open(args.feature_folder + "/encoder_" + task +".pickle", 'rb')
         encoder = pickle.load(encoder_file)
-        model = joblib.load("../train_data/trained_LR_" + task +".pkl")
+        model = joblib.load(args.feature_folder + "/trained_LR_" + task +".pkl")
 
         predictions = model.predict(predict_features)
         predictions = encoder.inverse_transform(predictions)

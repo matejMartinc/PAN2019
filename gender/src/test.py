@@ -2,7 +2,7 @@
 import tqdm
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from tfidf_kingdom import *
+from .tfidf_kingdom import *
 import argparse
 from collections import defaultdict
 import json
@@ -34,8 +34,9 @@ if __name__ == '__main__':
                            help='Choose output directory')
 
     argparser.add_argument('-c', '--input', dest='input', type=str,
-                           default='../../data/pan19-author-profiling-training-2019-02-18/',
+                           default='../../data/pan19-author-profiling-test-2019-02-18/',
                            help='Choose input dataset')
+    argparser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
     args = argparser.parse_args()
 
     output = args.output
@@ -75,7 +76,7 @@ if __name__ == '__main__':
         ## pan features
         print("Computing MM")
         test_df = build_dataframe(test_documents)
-        vectorizer_file = open("../train_data/vectorizer_bot_" + lang +  ".pickle", 'rb')
+        vectorizer_file = open(args.feature_folder + "/vectorizer_bot_" + lang +  ".pickle", 'rb')
         vectorizer = pickle.load(vectorizer_file)
         predict_features = vectorizer.transform(test_df)
 
@@ -83,9 +84,9 @@ if __name__ == '__main__':
 
         #hierarchical evaluation
         task = 'type'
-        encoder_file = open("../train_data/encoder_bot_" + lang + ".pickle", 'rb')
+        encoder_file = open(args.feature_folder + "/encoder_bot_" + lang + ".pickle", 'rb')
         encoder = pickle.load(encoder_file)
-        model = joblib.load("../train_data/trained_LR_bot_" + lang + ".pkl")
+        model = joblib.load(args.feature_folder + "/trained_LR_bot_" + lang + ".pkl")
         predictions = model.predict(predict_features)
         predictions = encoder.inverse_transform(predictions)
 
@@ -105,14 +106,14 @@ if __name__ == '__main__':
 
         print("Computing MM")
         test_df = build_dataframe(human_documents)
-        vectorizer_file = open("../train_data/vectorizer_gender_" + lang +  ".pickle", 'rb')
+        vectorizer_file = open(args.feature_folder + "/vectorizer_gender_" + lang +  ".pickle", 'rb')
         vectorizer = pickle.load(vectorizer_file)
         predict_features = vectorizer.transform(test_df)
 
         task = 'gender'
-        encoder_file = open("../train_data/encoder_" + task + "_" + lang + ".pickle", 'rb')
+        encoder_file = open(args.feature_folder + "/encoder_" + task + "_" + lang + ".pickle", 'rb')
         encoder = pickle.load(encoder_file)
-        model = joblib.load("../train_data/trained_LR_" + task + "_" + lang + ".pkl")
+        model = joblib.load(args.feature_folder + "/trained_LR_" + task + "_" + lang + ".pkl")
         predictions = model.predict(predict_features)
         predictions = encoder.inverse_transform(predictions)
 
