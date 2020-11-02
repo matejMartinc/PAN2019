@@ -2,7 +2,7 @@
 import tqdm
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from .tfidf_kingdom import *
+from tfidf_kingdom import *
 import json
 import pandas as pd
 
@@ -80,12 +80,14 @@ if __name__ == "__main__":
     parser.add_argument('--train_corpus', type=str, default='../../data/pan19-celebrity-profiling-training-dataset-2019-01-31/feeds.ndjson', help='Path to PAN train corpus')
     parser.add_argument('--train_labels', type=str,default="../../data/pan19-celebrity-profiling-training-dataset-2019-01-31/labels.ndjson", help='Path to PAN train labels')
     parser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
+    parser.add_argument('--all_data', action='store_true', help='Use all data for trainining. Set this to False if you want to conduct evaluation on the train data. If False, '
+                             '3837 instances will be removed from the train set and used as a validation set')
     args = parser.parse_args()
     data_inpt = args.train_corpus
     num_train = 30000
-    labels_inpt = args.train_label
+    labels_inpt = args.train_labels
     datafolder = args.feature_folder
-    a = parse_feeds(data_inpt, labels_inpt, train_threshold=num_train, all=True)
+    a = parse_feeds(data_inpt, labels_inpt, train_threshold=num_train, all=args.all_data)
 
     train_instances, test_instances, train_labels, test_labels, vectorizer = a
     out_obj = {"train_features": train_instances, "test_features": test_instances}

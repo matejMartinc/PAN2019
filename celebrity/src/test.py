@@ -2,7 +2,7 @@
 import tqdm
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from .tfidf_kingdom import *
+from tfidf_kingdom import *
 import argparse
 from collections import defaultdict
 import json
@@ -29,7 +29,7 @@ if __name__ == '__main__':
                            help='Choose output result directory')
 
     argparser.add_argument('--input', dest='input', type=str,
-                           default='../../data/pan19-celebrity-profiling-test-dataset-2019-01-31/feeds.ndjson',
+                           default='../../data/pan19-celebrity-profiling-test2-dataset-2019-05-02/feeds.ndjson',
                            help='Choose input test dataset')
     argparser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
     args = argparser.parse_args()

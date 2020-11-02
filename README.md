@@ -14,9 +14,10 @@ Install dependencies if needed: pip install -r requirements.txt
 
 Read data and generate features:<br/>
 ```
-python parse_data.py --num_samples 100 --train_corpus pathToTrainCorpus --train_labels pathToTrainLabels --feature_folder pathToOutputFeatureFolder
+python parse_data.py --num_samples 100 --train_corpus pathToTrainCorpus --train_labels pathToTrainLabels --feature_folder pathToOutputFeatureFolder --all_data
 ```
 
+Remove the '--all_data' flag if you want to reproduce the results on the evaluation set. If the flag is removed, 3837 examples are removed from the train set and used as a validation set.<br/><br/>
 Evaluate on development set:<br/>
 ```
 python evaluate.py --feature_folder pathToOutputFeatureFolder
