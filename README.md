@@ -6,9 +6,16 @@ Please cite these papers [[bib](https://github.com/matejMartinc/PAN2019/blob/mas
 
 Published results were produced in Python 3 programming environment on Linux Mint 18 Cinnamon operating system. Instructions for installation assume the usage of PyPI package manager.<br/>
 
-To only get the source code, clone the repository from github with 'git clone https://github.com/EMBEDDIA/PAN2019'<br/>
+To get the source code, clone the repository from github with 'git clone https://github.com/EMBEDDIA/PAN2019'<br/><br/>
+
+Data for the bot vs male vs female classification can be downloaded from here: <br/>
+https://zenodo.org/record/3692340#.YAARLNYo-Uk <br/>
+Data for the celebrity classification can be downloaded from here: <br/>
+https://zenodo.org/record/3885373#.YAASeNYo-Uk <br/>
 
 Install dependencies if needed: pip install -r requirements.txt
+
+### We have added a Jupyter notebook (see gender/src/example_usage.ipynb) in order to explain specific steps in the code.
 
 ### To reproduce the results of celebrity classification published in the paper run the code in the command line using following commands: ###
 

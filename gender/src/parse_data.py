@@ -2,7 +2,7 @@
 import tqdm 
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
-from .tfidf_kingdom import *
+from tfidf_kingdom import *
 import json
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
@@ -155,9 +155,12 @@ if __name__ == "__main__":
     parser.add_argument('--feature_folder', type=str, default="../train_data", help='Path to output feature folder')
     args = parser.parse_args()
 
+    if not os.path.exists(args.feature_folder):
+        os.makedirs(args.feature_folder)
+
     for lang in ['en', 'es']:
         data_path = os.path.join(args.train_corpus, lang)
-        bot, gender = parse_feeds(data_path, all=True)
+        bot, gender = parse_feeds(data_path, all=False)
         task = "bot"
         train_instances,test_instances, train_labels,test_labels,vectorizer = bot
         out_obj = {"train_features":train_instances,"test_features":test_instances}

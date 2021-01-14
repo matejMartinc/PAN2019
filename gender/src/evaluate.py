@@ -4,11 +4,7 @@ from sklearn.linear_model import LogisticRegression
 import pickle
 from sklearn import preprocessing
 import numpy as np
-from sklearn.metrics import f1_score, accuracy_score
-from sklearn import linear_model
-from sklearn.svm import LinearSVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import accuracy_score
 import logging
 from sklearn.externals import joblib
 logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
